@@ -35,6 +35,8 @@ void options_t::print(std::ostream& optionsOut) {
         optionsOut << "\nSearch=RDFS";
     } else if (strategy == Strategy::RPFS) {
         optionsOut << "\nSearch=RPFS";
+    } else if (strategy == Strategy::MONTE) {
+        optionsOut << "\nSearch=MONTE";
     } else {
         optionsOut << "\nSearch=OverApprox";
     }
@@ -133,8 +135,10 @@ void printHelp() {
         "                                       - DFS          Depth first search (CTL default)\n"
         "                                       - RDFS         Random depth first search\n"
         "                                       - RPFS         Random potency first search\n"
+        "                                       - MONTE        Random walk through monto carlo simulations\n"
         "                                       - OverApprox   Linear Over Approx\n"
         "  --seed-offset <number>               Extra noise to add to the seed of the random number generation\n"
+        "  --max-steps <number>                 Amount of steps that Monte Carlo simulations takes before restarting\n"
         "  -e, --state-space-exploration        State-space exploration only (query-file is irrelevant)\n"
         "  -x, --xml-queries <query index>      Parse XML query file and verify queries of a given comma-seperated list\n"
         "  -r, --reduction <type>               Change structural net reduction:\n"
@@ -266,6 +270,8 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::RDFS;
             else if (std::strcmp(s, "RPFS") == 0)
                 strategy = Strategy::RPFS;
+            else if (std::strcmp(s, "MONTE") == 0)
+                strategy = Strategy::MONTE;
             else if (std::strcmp(s, "OverApprox") == 0)
                 strategy = Strategy::OverApprox;
             else {
@@ -385,7 +391,11 @@ bool options_t::parse(int argc, const char** argv) {
         } else if (std::strcmp(argv[i], "--seed-offset") == 0) {
         if (sscanf(argv[++i], "%u", &seed_offset) != 1) {
             throw base_error("Argument Error: Invalid seed offset argument ", std::quoted(argv[i]));
-        }
+        } 
+        } else if (std::strcmp(argv[i], "--max-steps") == 0) {
+            if (sscanf(arv[++i], "%u", &max_steps) != 1) {
+                throw base_error("Argument Error: Invalud max steps argument ", std::quoted(argv[i]));
+            }
         } else if (std::strcmp(argv[i], "-p") == 0 || std::strcmp(argv[i], "--disable-partial-order") == 0) {
             stubbornreduction = false;
         } else if (std::strcmp(argv[i], "-a") == 0 || std::strcmp(argv[i], "--siphon-trap") == 0) {

@@ -62,7 +62,8 @@ namespace PetriEngine {
                     bool statespacesearch,
                     bool printstats,
                     bool keep_trace,
-                    size_t seed);
+                    size_t seed,
+                    size_t max_steps);
             size_t maxTokens() const;
         private:
             struct searchstate_t {
@@ -79,7 +80,8 @@ namespace PetriEngine {
                 std::vector<ResultPrinter::Result>& results,
                 bool usequeries,
                 bool printstats,
-                size_t seed);
+                size_t seed,
+                size_t max_steps);
             void printStats(searchstate_t& s, Structures::StateSetInterface*);
             bool checkQueries(  std::vector<std::shared_ptr<PQL::Condition > >&,
                                     std::vector<ResultPrinter::Result>&,
@@ -108,7 +110,7 @@ namespace PetriEngine {
         template<typename Q, typename W, typename G>
         bool ReachabilitySearch::tryReach(   std::vector<std::shared_ptr<PQL::Condition> >& queries,
                                         std::vector<ResultPrinter::Result>& results, bool usequeries,
-                                        bool printstats, size_t seed)
+                                        bool printstats, size_t seed, size_t max_steps)
         {
 
             // set up state
@@ -127,7 +129,7 @@ namespace PetriEngine {
             working.setMarking(_net.makeInitialMarking());
 
             W states(_net, _kbound);    // stateset
-            Q queue(seed);           // working queue
+            Q queue(seed, max_steps);           // working queue
             G generator = _makeSucGen<G>(_net, queries); // successor generator
             auto r = states.add(state);
             // this can fail due to reductions; we push tokens around and violate K

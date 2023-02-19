@@ -25,7 +25,7 @@ namespace PetriEngine {
     namespace Structures {
         class Queue {
         public:
-            Queue(size_t s = 0);
+            Queue(size_t s = 0, size_t ms = 5000);
             virtual ~Queue();
             virtual size_t pop() = 0;
 
@@ -37,7 +37,7 @@ namespace PetriEngine {
 
         class BFSQueue : public Queue {
         public:
-            BFSQueue(size_t);
+            BFSQueue(size_t, size_t);
             virtual ~BFSQueue();
 
             virtual size_t pop() override;
@@ -50,7 +50,7 @@ namespace PetriEngine {
 
         class DFSQueue : public Queue {
         public:
-            DFSQueue(size_t);
+            DFSQueue(size_t, size_t);
             virtual ~DFSQueue();
 
             virtual size_t pop();
@@ -64,7 +64,7 @@ namespace PetriEngine {
 
         class RDFSQueue : public Queue {
         public:
-            RDFSQueue(size_t seed);
+            RDFSQueue(size_t seed, size_t);
             virtual ~RDFSQueue();
 
             virtual size_t pop();
@@ -90,7 +90,7 @@ namespace PetriEngine {
                 }
             };
 
-            HeuristicQueue(size_t);
+            HeuristicQueue(size_t, size_t);
             virtual ~HeuristicQueue();
 
             virtual size_t pop();

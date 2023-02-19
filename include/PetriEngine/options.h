@@ -19,6 +19,7 @@ enum class Strategy {
     RDFS,
     OverApprox,
     RPFS,
+    MONTE,
     DEFAULT
 };
 
@@ -98,8 +99,10 @@ struct options_t {
     int max_intervals = 500; //0 disabled
     int max_intervals_reduced = 5;
 
-    std::string strategy_output;
+    uint32_t max_steps = 5000;
 
+    std::string strategy_output;
+    size_t maxsteps() { return max_steps; }
     size_t seed() { return ++seed_offset; }
     void print(std::ostream& out = std::cout);
     bool parse(int argc, const char** argv);

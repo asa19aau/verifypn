@@ -523,7 +523,8 @@ int main(int argc, const char** argv) {
                                    options.statespaceexploration,
                                    options.printstatistics,
                                    options.trace != TraceLevel::None,
-                                   options.seed());
+                                   options.seed(),
+                                   options.max_steps);
             }
         }
     } catch (base_error& e) {

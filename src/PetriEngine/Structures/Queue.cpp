@@ -23,13 +23,13 @@
 
 namespace PetriEngine {
     namespace Structures {
-        Queue::Queue(size_t) {}
+        Queue::Queue(size_t, size_t) {}
 
         Queue::~Queue() {
         }
 
 
-        BFSQueue::BFSQueue(size_t) : Queue() {}
+        BFSQueue::BFSQueue(size_t, size_t) : Queue() {}
         BFSQueue::~BFSQueue(){}
 
         size_t BFSQueue::pop()
@@ -56,7 +56,7 @@ namespace PetriEngine {
             return _queue.empty();
         }
 
-        DFSQueue::DFSQueue(size_t) : Queue() {}
+        DFSQueue::DFSQueue(size_t, size_t) : Queue() {}
         DFSQueue::~DFSQueue(){}
 
         size_t DFSQueue::pop()
@@ -84,7 +84,7 @@ namespace PetriEngine {
             return true;
         }*/
 
-        RDFSQueue::RDFSQueue(size_t seed) : Queue()
+        RDFSQueue::RDFSQueue(size_t seed, size_t) : Queue()
         {
             _rng.seed(seed);
         }
@@ -140,7 +140,7 @@ namespace PetriEngine {
             return _cache.empty() && _stack.empty();
         }
 
-        HeuristicQueue::HeuristicQueue(size_t) : Queue() {}
+        HeuristicQueue::HeuristicQueue(size_t, size_t) : Queue() {}
         HeuristicQueue::~HeuristicQueue(){}
 
         size_t HeuristicQueue::pop()

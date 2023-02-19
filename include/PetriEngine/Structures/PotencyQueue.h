@@ -30,7 +30,7 @@ namespace PetriEngine {
                 potency_t(uint32_t v, size_t p, size_t n) : value(v), prev(p), next(n) {};
             };
 
-            PotencyQueue(size_t s = 0);
+            PotencyQueue(size_t s = 0, size_t ms = 5000);
 
             virtual ~PotencyQueue();
 
@@ -56,7 +56,7 @@ namespace PetriEngine {
 
         class RandomPotencyQueue : public PotencyQueue {
         public:
-            RandomPotencyQueue(size_t seed);
+            RandomPotencyQueue(size_t seed, size_t);
 
             virtual ~RandomPotencyQueue();
 
@@ -68,6 +68,23 @@ namespace PetriEngine {
 
         private:
             size_t _seed;
+        };
+        class MontePotencyQueue : public PotencyQueue {
+        public:
+            MontePotencyQueue(size_t seed, size_t maxsteps);
+
+            virtual ~MontePotencyQueue();
+
+            using PotencyQueue::push;
+
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t) override;
+
+            size_t pop();
+
+        private:
+            size_t _seed;
+            size_t _maxsteps;
+
         };
     }
 }

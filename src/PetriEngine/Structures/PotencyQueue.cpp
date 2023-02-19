@@ -3,7 +3,7 @@
 
 namespace PetriEngine {
     namespace Structures {
-        PotencyQueue::PotencyQueue(size_t s) {}
+        PotencyQueue::PotencyQueue(size_t s, size_t) {}
 
         PotencyQueue::~PotencyQueue() {}
 
@@ -69,7 +69,7 @@ namespace PetriEngine {
             _best = 0;
         }
 
-        RandomPotencyQueue::RandomPotencyQueue(size_t seed) : PotencyQueue(seed), _seed(seed) {
+        RandomPotencyQueue::RandomPotencyQueue(size_t seed, size_t) : PotencyQueue(seed), _seed(seed) {
             srand(_seed);
         }
 
@@ -105,6 +105,80 @@ namespace PetriEngine {
         }
 
         size_t RandomPotencyQueue::pop() {
+            if (_size == 0)
+                return PetriEngine::PQL::EMPTY;
+
+            if (_potencies.empty()) {
+                weighted_t e = _queues[_best].top();
+                _queues[_best].pop();
+                _size--;
+                _currentParentDist = e.weight;
+                return e.item;
+            }
+
+            uint32_t n = 0;
+            size_t current = SIZE_MAX;
+
+            size_t t = _best;
+            while (t != SIZE_MAX) {
+                if (_queues[t].empty()) {
+                    t = _potencies[t].next;
+                    continue;
+                }
+
+                n += _potencies[t].value;
+                double r = (double) rand() / RAND_MAX;
+                float threshold = _potencies[t].value / (float) n;
+                if (r <= threshold)
+                    current = t;
+
+                t = _potencies[t].next;
+            }
+
+            weighted_t e = _queues[current].top();
+            _queues[current].pop();
+            _size--;
+            _currentParentDist = e.weight;
+            return e.item;
+        }
+        
+        MontePotencyQueue::MontePotencyQueue(size_t seed, size_t maxsteps) : PotencyQueue(seed), _seed(seed), _maxsteps(maxsteps) {
+            srand(_seed);
+        }
+
+        MontePotencyQueue::~MontePotencyQueue() {}
+
+
+        void
+        MontePotencyQueue::push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t) {
+            uint32_t dist = query->distance(*context);
+
+            if (dist < _currentParentDist) {
+                _potencies[t].value += _currentParentDist - dist;
+                while (_potencies[t].prev != SIZE_MAX && _potencies[t].value > _potencies[_potencies[t].prev].value) {
+                    _swapAdjacent(_potencies[t].prev, t);
+                }
+
+                if (_potencies[t].prev == SIZE_MAX)
+                    _best = t;
+            } else if (dist > _currentParentDist && _potencies[t].value != 0) {
+                if (_potencies[t].value - 1 >= dist - _currentParentDist)
+                    _potencies[t].value -= dist - _currentParentDist;
+                else
+                    _potencies[t].value = 1;
+                while (_potencies[t].next != SIZE_MAX && _potencies[t].value < _potencies[_potencies[t].next].value) {
+                    if (_best == t)
+                        _best = _potencies[t].next;
+
+                    _swapAdjacent(t, _potencies[t].next);
+                }
+            }
+
+            _queues[t].emplace(dist, id);
+            _size++;
+        }
+
+        size_t MontePotencyQueue::pop() {
             if (_size == 0)
                 return PetriEngine::PQL::EMPTY;
 

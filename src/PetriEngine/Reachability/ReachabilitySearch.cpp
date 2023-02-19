@@ -117,7 +117,7 @@ namespace PetriEngine {
             std::cout << std::endl << std::endl;
         }
 
-#define TRYREACHPAR    (queries, results, usequeries, printstats, seed)
+#define TRYREACHPAR    (queries, results, usequeries, printstats, seed, max_steps)
 #define TEMPPAR(X, Y)  if(keep_trace) return tryReach<X, Structures::TracableStateSet, Y>TRYREACHPAR ; \
                        else return tryReach<X, Structures::StateSet, Y> TRYREACHPAR;
 #define TRYREACH(X)    if(stubbornreduction) TEMPPAR(X, ReducingSuccessorGenerator) \
@@ -136,7 +136,8 @@ namespace PetriEngine {
                     bool statespacesearch,
                     bool printstats,
                     bool keep_trace,
-                    size_t seed)
+                    size_t seed,
+                    size_t max_steps)
         {
             bool usequeries = !statespacesearch;
 
@@ -159,6 +160,9 @@ namespace PetriEngine {
                     break;
                 case Strategy::RPFS:
                     TRYREACH(RandomPotencyQueue)
+                    break;
+                case Strategy::MONTE:
+                    TRYREACH(MontePotencyQueue)
                     break;
                 default:
                     throw base_error("Unsupported search strategy");
