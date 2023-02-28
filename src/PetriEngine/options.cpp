@@ -35,6 +35,8 @@ void options_t::print(std::ostream& optionsOut) {
         optionsOut << "\nSearch=RDFS";
     } else if (strategy == Strategy::RPFS) {
         optionsOut << "\nSearch=RPFS";
+    } else if (strategy == Strategy::MONTE) {
+        optionsOut << "\nSearch=MONTE";
     } else {
         optionsOut << "\nSearch=OverApprox";
     }
@@ -266,6 +268,8 @@ bool options_t::parse(int argc, const char** argv) {
                 strategy = Strategy::RDFS;
             else if (std::strcmp(s, "RPFS") == 0)
                 strategy = Strategy::RPFS;
+            else if (std::strcmp(s, "MONTE") == 0)
+                strategy = Strategy::MONTE;
             else if (std::strcmp(s, "OverApprox") == 0)
                 strategy = Strategy::OverApprox;
             else {
@@ -648,6 +652,7 @@ bool options_t::parse(int argc, const char** argv) {
            strategy != Strategy::RDFS &&
            strategy != Strategy::HEUR &&
            strategy != Strategy::RPFS &&
+           strategy != Strategy::MONTE &&
            strategy != Strategy::DEFAULT &&
            strategy != Strategy::OverApprox)
         {

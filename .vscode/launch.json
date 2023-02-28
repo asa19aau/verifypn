@@ -1,0 +1,16 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "lldb",
+            "request": "launch",
+            "name": "Debug",
+            "program": "${workspaceFolder}/build/verifypn/bin/verifypn-linux64",
+            "args": ["-x", "11", "-n", "-s", "MONTE", "cpn_tests/FamilyReunion-COL-L00010M0001C001P001G001/model.pnml", "cpn_tests/FamilyReunion-COL-L00010M0001C001P001G001/ReachabilityCardinality.xml"],
+            "cwd": "${workspaceFolder}"
+        }
+    ]
+}

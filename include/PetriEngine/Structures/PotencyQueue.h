@@ -69,6 +69,23 @@ namespace PetriEngine {
         private:
             size_t _seed;
         };
+
+        class MontePotencyQueue : public PotencyQueue {
+        public:
+            MontePotencyQueue(size_t seed);
+
+            virtual ~MontePotencyQueue();
+
+            using PotencyQueue::push;
+
+
+            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t) override;
+
+            size_t pop();
+
+        private:
+            size_t _seed;
+        };
     }
 }
 

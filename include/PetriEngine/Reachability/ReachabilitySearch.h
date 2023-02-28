@@ -164,6 +164,8 @@ namespace PetriEngine {
                                 PQL::DistanceContext dc(&_net, working.marking());
                                 if constexpr (std::is_same_v<Q, Structures::RandomPotencyQueue>)
                                     queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
+                                else if constexpr (std::is_same_v<Q, Structures::MontePotencyQueue>)
+                                    queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
                                 else
                                     queue.push(res.second, &dc, queries[ss.heurquery].get());
                             }
@@ -180,6 +182,9 @@ namespace PetriEngine {
                     }
                     ss.expandedStates++;
                 }
+
+                //add monte search here
+
             }
 
             // no more successors, print last results

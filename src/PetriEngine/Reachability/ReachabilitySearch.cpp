@@ -160,6 +160,9 @@ namespace PetriEngine {
                 case Strategy::RPFS:
                     TRYREACH(RandomPotencyQueue)
                     break;
+                case Strategy::MONTE:
+                    TRYREACH(MontePotencyQueue)
+                    break;
                 default:
                     throw base_error("Unsupported search strategy");
             }
