@@ -30,7 +30,7 @@ namespace PetriEngine {
                 potency_t(uint32_t v, size_t p, size_t n) : value(v), prev(p), next(n) {};
             };
 
-            PotencyQueue(size_t s = 0, size_t ms = 5000);
+            PotencyQueue(size_t s = 0);
 
             virtual ~PotencyQueue();
 
@@ -56,7 +56,7 @@ namespace PetriEngine {
 
         class RandomPotencyQueue : public PotencyQueue {
         public:
-            RandomPotencyQueue(size_t seed, size_t);
+            RandomPotencyQueue(size_t seed);
 
             virtual ~RandomPotencyQueue();
 

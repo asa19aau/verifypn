@@ -3,7 +3,7 @@
 
 namespace PetriEngine {
     namespace Structures {
-        PotencyQueue::PotencyQueue(size_t s, size_t) {}
+        PotencyQueue::PotencyQueue(size_t s) {}
 
         PotencyQueue::~PotencyQueue() {}
 
@@ -69,7 +69,7 @@ namespace PetriEngine {
             _best = 0;
         }
 
-        RandomPotencyQueue::RandomPotencyQueue(size_t seed, size_t) : PotencyQueue(seed), _seed(seed) {
+        RandomPotencyQueue::RandomPotencyQueue(size_t seed) : PotencyQueue(seed), _seed(seed) {
             srand(_seed);
         }
 

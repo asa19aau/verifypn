@@ -117,12 +117,17 @@ namespace PetriEngine {
             std::cout << std::endl << std::endl;
         }
 
-#define TRYREACHPAR    (queries, results, usequeries, printstats, seed, max_steps)
+#define TRYREACHPAR    (queries, results, usequeries, printstats, seed)
 #define TEMPPAR(X, Y)  if(keep_trace) return tryReach<X, Structures::TracableStateSet, Y>TRYREACHPAR ; \
                        else return tryReach<X, Structures::StateSet, Y> TRYREACHPAR;
 #define TRYREACH(X)    if(stubbornreduction) TEMPPAR(X, ReducingSuccessorGenerator) \
                        else TEMPPAR(X, SuccessorGenerator)
 
+#define TRYREACHMONTEPAR    (queries, results, usequeries, printstats, seed)
+#define TEMPMONTEPAR(X, Y)  if(keep_trace) return tryReach<X, Structures::TracableStateSet, Y>TRYREACHMONTEPAR ; \
+                       else return tryReach<X, Structures::StateSet, Y> TRYREACHMONTEPAR;
+#define TRYREACHMONTE(X)    if(stubbornreduction) TEMPMONTEPAR(X, ReducingSuccessorGenerator) \
+                       else TEMPMONTEPAR(X, SuccessorGenerator)
 
         size_t ReachabilitySearch::maxTokens() const {
             return _max_tokens;
@@ -136,8 +141,7 @@ namespace PetriEngine {
                     bool statespacesearch,
                     bool printstats,
                     bool keep_trace,
-                    size_t seed,
-                    size_t max_steps)
+                    size_t seed)
         {
             bool usequeries = !statespacesearch;
 
@@ -162,7 +166,7 @@ namespace PetriEngine {
                     TRYREACH(RandomPotencyQueue)
                     break;
                 case Strategy::MONTE:
-                    TRYREACH(MontePotencyQueue)
+                    TRYREACHMONTE(MontePotencyQueue)
                     break;
                 default:
                     throw base_error("Unsupported search strategy");
