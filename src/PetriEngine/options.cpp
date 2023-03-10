@@ -390,6 +390,10 @@ bool options_t::parse(int argc, const char** argv) {
         if (sscanf(argv[++i], "%u", &seed_offset) != 1) {
             throw base_error("Argument Error: Invalid seed offset argument ", std::quoted(argv[i]));
         }
+        } else if (std::strcmp(argv[i], "--max-steps") == 0) {
+            if (sscanf(argv[++i], "%u", &max_steps) != 1){
+                throw base_error("Argument Error: Invalid max steps argument", std::quoted(argv[i]));
+            }
         } else if (std::strcmp(argv[i], "-p") == 0 || std::strcmp(argv[i], "--disable-partial-order") == 0) {
             stubbornreduction = false;
         } else if (std::strcmp(argv[i], "-a") == 0 || std::strcmp(argv[i], "--siphon-trap") == 0) {

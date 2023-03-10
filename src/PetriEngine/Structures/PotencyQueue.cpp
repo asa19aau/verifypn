@@ -228,7 +228,6 @@ namespace PetriEngine {
                 //std::cout << _queues[i].size();
                 //std::cout << "\n";
             }
-            std::cout << "\n";
 
             return e.item;
         }

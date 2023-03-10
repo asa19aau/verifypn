@@ -96,6 +96,7 @@ struct options_t {
     bool symmetricVariables = true;
     bool isCPN = false;
     uint32_t seed_offset = 0;
+    uint32_t max_steps = 5000;
     int max_intervals = 500; //0 disabled
     int max_intervals_reduced = 5;
 

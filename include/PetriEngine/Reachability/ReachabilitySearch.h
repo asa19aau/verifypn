@@ -62,7 +62,8 @@ namespace PetriEngine {
                     bool statespacesearch,
                     bool printstats,
                     bool keep_trace,
-                    size_t seed);
+                    size_t seed,
+                    size_t max_steps);
             size_t maxTokens() const;
         private:
             struct searchstate_t {
@@ -79,7 +80,8 @@ namespace PetriEngine {
                 std::vector<ResultPrinter::Result>& results,
                 bool usequeries,
                 bool printstats,
-                size_t seed);
+                size_t seed,
+                size_t max_steps);
             void printStats(searchstate_t& s, Structures::StateSetInterface*);
             bool checkQueries(  std::vector<std::shared_ptr<PQL::Condition > >&,
                                     std::vector<ResultPrinter::Result>&,
@@ -108,7 +110,7 @@ namespace PetriEngine {
         template<typename Q, typename W, typename G>
         bool ReachabilitySearch::tryReach(   std::vector<std::shared_ptr<PQL::Condition> >& queries,
                                         std::vector<ResultPrinter::Result>& results, bool usequeries,
-                                        bool printstats, size_t seed)
+                                        bool printstats, size_t seed, size_t max_steps)
         {
 
             // set up state
@@ -152,40 +154,78 @@ namespace PetriEngine {
                 }
 
                 // Search!
-                for(auto nid = queue.pop(); nid != Structures::Queue::EMPTY; nid = queue.pop()) {
-                    states.decode(state, nid);
-                    generator.prepare(&state);
+                if constexpr (!(std::is_same_v<Q, Structures::MontePotencyQueue>))
+                {
+                    for(auto nid = queue.pop(); nid != Structures::Queue::EMPTY; nid = queue.pop()) {
+                        states.decode(state, nid);
+                        generator.prepare(&state);
 
-                    while(generator.next(working)){
-                        ss.enabledTransitionsCount[generator.fired()]++;
-                        auto res = states.add(working);
-                        if (res.first) {
-                            {
-                                PQL::DistanceContext dc(&_net, working.marking());
-                                if constexpr (std::is_same_v<Q, Structures::RandomPotencyQueue>)
-                                    queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
-                                else if constexpr (std::is_same_v<Q, Structures::MontePotencyQueue>)
-                                    queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
-                                else
-                                    queue.push(res.second, &dc, queries[ss.heurquery].get());
-                            }
-                            states.setHistory(res.second, generator.fired());
-                            _satisfyingMarking = res.second;
-                            ss.exploredStates++;
-                            if (checkQueries(queries, results, working, ss, &states)) {
-                                if(printstats)
-                                    printStats(ss, &states);
-                                _max_tokens = states.maxTokens();
-                                return true;
+                        while(generator.next(working)){
+                            ss.enabledTransitionsCount[generator.fired()]++;
+                            auto res = states.add(working);
+                            if (res.first) {
+                                {
+                                    PQL::DistanceContext dc(&_net, working.marking());
+                                    if constexpr (std::is_same_v<Q, Structures::RandomPotencyQueue>)
+                                        queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
+                                    else if constexpr (std::is_same_v<Q, Structures::MontePotencyQueue>)
+                                        queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
+                                    else
+                                        queue.push(res.second, &dc, queries[ss.heurquery].get());
+                                }
+                                states.setHistory(res.second, generator.fired());
+                                _satisfyingMarking = res.second;
+                                ss.exploredStates++;
+                                if (checkQueries(queries, results, working, ss, &states)) {
+                                    if(printstats)
+                                        printStats(ss, &states);
+                                    _max_tokens = states.maxTokens();
+                                    return true;
+                                }
                             }
                         }
+                        ss.expandedStates++;
                     }
-                    ss.expandedStates++;
                 }
+                else
+                {
+                    //Monte-carlo simulations
+                    auto initialmarking = queue.pop();
+                    while(1)
+                    {
+                        auto nid = initialmarking;
+                        std::cout << max_steps << "\n";
+                        for(auto i = 0; i < max_steps && nid != Structures::Queue::EMPTY; i++, nid = queue.pop()) {
+                            states.decode(state, nid);
+                            generator.prepare(&state);
+                            while(generator.next(working)){
+                                ss.enabledTransitionsCount[generator.fired()]++;
+                                auto res = states.add(working);
+                                if (res.first) {
+                                    std::cout << working.marking() << " " << res.second << " " << generator.fired() << "\n";
+                                    PQL::DistanceContext dc(&_net, working.marking());
+                                    queue.push(res.second, &dc, queries[ss.heurquery].get(), generator.fired());
 
-                //add monte search here
-
+                                    states.setHistory(res.second, generator.fired());
+                                    _satisfyingMarking = res.second;
+                                    ss.exploredStates++;
+                                    if (checkQueries(queries, results, working, ss, &states)) {
+                                        if (printstats)
+                                            printStats(ss, &states);
+                                        _max_tokens = states.maxTokens();
+                                        return true;
+                                    }
+                                }
+                            }
+                            ss.expandedStates++;
+                        }
+                        std::cout << "\nwhile loop\n";
+                    }
+                    std::cout << "unreachable?";
+                }
             }
+
+            std::cout << "test?";
 
             // no more successors, print last results
             for(size_t i= 0; i < queries.size(); ++i)

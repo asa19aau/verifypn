@@ -170,7 +170,8 @@ bool solveLogicalCondition(LogicalCondition* query, bool is_conj, PetriNet* net,
                                         false,
                                         false,
                                         false,
-                                        options.seed());
+                                        options.seed(),
+                                        options.max_steps);
             result.maxTokens = std::max(handler._max_tokens, result.maxTokens);
             result.exploredConfigurations += handler._explored;
             result.numberOfConfigurations += handler._stored;
@@ -258,7 +259,8 @@ bool recursiveSolve(Condition* query, PetriEngine::PetriNet* net,
                            false,
                            false,
                            false,
-                           options.seed());
+                           options.seed(),
+                           options.max_steps);
             result.maxTokens = std::max(handler._max_tokens, result.maxTokens);
             result.exploredConfigurations += handler._explored;
             result.numberOfConfigurations += handler._stored;

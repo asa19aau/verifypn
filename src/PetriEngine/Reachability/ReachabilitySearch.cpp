@@ -77,6 +77,7 @@ namespace PetriEngine {
         std::pair<ResultPrinter::Result,bool> ReachabilitySearch::doCallback(std::shared_ptr<PQL::Condition>& query, size_t i, ResultPrinter::Result r,
                                                              searchstate_t& ss, Structures::StateSetInterface* states)
         {
+            std::cout << "docallback\n";
             return _callback.handle(i, query.get(), r, &states->maxPlaceBound(),
                         ss.expandedStates, ss.exploredStates, states->discovered(), states->maxTokens(),
                         states, _satisfyingMarking, _initial.marking());
@@ -117,7 +118,7 @@ namespace PetriEngine {
             std::cout << std::endl << std::endl;
         }
 
-#define TRYREACHPAR    (queries, results, usequeries, printstats, seed)
+#define TRYREACHPAR    (queries, results, usequeries, printstats, seed, max_steps)
 #define TEMPPAR(X, Y)  if(keep_trace) return tryReach<X, Structures::TracableStateSet, Y>TRYREACHPAR ; \
                        else return tryReach<X, Structures::StateSet, Y> TRYREACHPAR;
 #define TRYREACH(X)    if(stubbornreduction) TEMPPAR(X, ReducingSuccessorGenerator) \
@@ -136,7 +137,8 @@ namespace PetriEngine {
                     bool statespacesearch,
                     bool printstats,
                     bool keep_trace,
-                    size_t seed)
+                    size_t seed,
+                    size_t max_steps)
         {
             bool usequeries = !statespacesearch;
 
