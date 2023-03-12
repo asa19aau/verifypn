@@ -62,7 +62,7 @@ namespace PetriEngine {
 
             using PotencyQueue::push;
 
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t) override;
+            virtual void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t) override;
 
             size_t pop();
 
@@ -70,16 +70,13 @@ namespace PetriEngine {
             size_t _seed;
         };
 
-        class MontePotencyQueue : public PotencyQueue {
+        class MontePotencyQueue : public RandomPotencyQueue {
         public:
             MontePotencyQueue(size_t seed);
 
             virtual ~MontePotencyQueue();
 
-            using PotencyQueue::push;
-
-
-            void push(size_t id, PQL::DistanceContext *context, const PQL::Condition *query, uint32_t t) override;
+            using RandomPotencyQueue::push;
 
             size_t pop();
 
